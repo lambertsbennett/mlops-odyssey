@@ -1,0 +1,68 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  generateName: etl-cron-wf-
+spec:
+  schedule: "0 1 * * *"
+  concurrencyPolicy: "Allow"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: extract-transform-load
+
+    templates:
+      - name: extract-transform-load
+        dag:
+          tasks:
+            - name: extract
+              template: extract-template
+            - name: transform
+              arguments:
+                artifacts:
+                  [
+                    {
+                      name: api-result,
+                      from: "{{tasks.extract.outputs.artifacts.api-result}}",
+                    },
+                  ]
+              template: transform-template
+              dependencies: [extract]
+            - name: load
+              arguments:
+                artifacts:
+                  [
+                    {
+                      name: transformed-data,
+                      from: "{{tasks.transform.outputs.artifacts.transformed-data}}",
+                    },
+                  ]
+              template: load-template
+              dependencies: [transform]
+
+      - name: extract-template
+        container:
+          image: lambertsbennett/extract
+          command: [python, extract.py]
+        outputs:
+          artifacts:
+            - name: api-result
+              path: /results.json
+      - name: transform-template
+        inputs:
+          artifacts:
+            - name: api-result
+              path: /results.json
+        container:
+          image: lambertsbennett/transform
+          command: [python, transform.py]
+        outputs:
+          artifacts:
+            - name: transformed-data
+              path: /data.parquet
+      - name: load-template
+        inputs:
+          artifacts:
+            - name: transformed-data
+              path: /data.parquet
+        container:
+          image: lambertsbennett/load
+          command: [python, load.py]
