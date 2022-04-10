@@ -1,6 +1,6 @@
 FROM python:3.9
 
-RUN pip install minio
+RUN pip install minio pyyaml
 
 COPY load.py load.py
 

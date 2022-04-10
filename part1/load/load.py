@@ -9,7 +9,7 @@ with open ("config.yaml", "r") as stream:
 
 def put_file_minio(filename):
     client = Minio(
-        "minio:9000",
+        "minio.mlops.svc.cluster.local:9000",
         access_key=config["MINIO_USER"],
         secret_key=config["MINIO_PASSWORD"],
         secure=False
