@@ -1,0 +1,139 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"name":"argo-role","namespace":"argo"},"rules":[{"apiGroups":["coordination.k8s.io"],"resources":["leases"],"verbs":["create","get","update"]},{"apiGroups":[""],"resources":["pods","pods/exec"],"verbs":["create","get","list","watch","update","patch","delete"]},{"apiGroups":[""],"resources":["configmaps"],"verbs":["get","watch","list"]},{"apiGroups":[""],"resources":["persistentvolumeclaims","persistentvolumeclaims/finalizers"],"verbs":["create","update","delete","get"]},{"apiGroups":["argoproj.io"],"resources":["workflows","workflows/finalizers","workflowtasksets","workflowtasksets/finalizers"],"verbs":["get","list","watch","update","patch","delete","create"]},{"apiGroups":["argoproj.io"],"resources":["workflowtemplates","workflowtemplates/finalizers"],"verbs":["get","list","watch"]},{"apiGroups":[""],"resources":["serviceaccounts"],"verbs":["get","list"]},{"apiGroups":["argoproj.io"],"resources":["workflowtaskresults"],"verbs":["list","watch","deletecollection"]},{"apiGroups":[""],"resources":["serviceaccounts"],"verbs":["get","list"]},{"apiGroups":[""],"resources":["secrets"],"verbs":["get"]},{"apiGroups":["argoproj.io"],"resources":["cronworkflows","cronworkflows/finalizers"],"verbs":["get","list","watch","update","patch","delete"]},{"apiGroups":[""],"resources":["events"],"verbs":["create","patch"]},{"apiGroups":["policy"],"resources":["poddisruptionbudgets"],"verbs":["create","get","delete"]}]}
+  creationTimestamp: "2022-04-09T11:28:12Z"
+  name: argo-role
+  namespace: argo
+  resourceVersion: "608"
+  uid: b701e557-f351-4fbc-ad36-1109fc5e2b95
+rules:
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/exec
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+      - persistentvolumeclaims/finalizers
+    verbs:
+      - create
+      - update
+      - delete
+      - get
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflows
+      - workflows/finalizers
+      - workflowtasksets
+      - workflowtasksets/finalizers
+      - sensors
+      - sensors/finalizers
+      - sensors/status
+      - eventsources
+      - eventsources/finalizers
+      - eventsources/status
+      - eventbus
+      - eventbus/finalizers
+      - eventbus/status
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete
+      - create
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflowtemplates
+      - workflowtemplates/finalizers
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - workflowtaskresults
+    verbs:
+      - list
+      - watch
+      - deletecollection
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - cronworkflows
+      - cronworkflows/finalizers
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - create
+      - get
+      - delete
