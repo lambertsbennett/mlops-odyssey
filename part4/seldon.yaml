@@ -8,7 +8,8 @@ spec:
     - graph:
         children: []
         implementation: MLFLOW_SERVER
-        modelUri: http://localhost:5000/#/models/sk-learn-random-forest-reg-model/versions/3
+        modelUri: s3://artifacts/24/0cce287702c547578f9d8054994bd739/artifacts/artifacts
+        envSecretRefName: bpk-seldon-init-container-secret
         name: regressor
       name: default
       replicas: 1

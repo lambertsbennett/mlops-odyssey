@@ -26,5 +26,5 @@ with mlflow.start_run(run_name="YOUR_RUN_NAME") as run:
     mlflow.sklearn.log_model(
         sk_model=sk_learn_rfr,
         artifact_path="artifacts",
-        registered_model_name="sk-learn-random-forest-reg-model"
+        registered_model_name="sk-learn-random-forest-reg-model",
     )
