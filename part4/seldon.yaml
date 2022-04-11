@@ -1,0 +1,14 @@
+apiVersion: machinelearning.seldon.io/v1alpha2
+kind: SeldonDeployment
+metadata:
+  name: mlflow-serving
+spec:
+  name: test-model
+  predictors:
+    - graph:
+        children: []
+        implementation: MLFLOW_SERVER
+        modelUri: http://localhost:5000/#/models/sk-learn-random-forest-reg-model/versions/3
+        name: regressor
+      name: default
+      replicas: 1

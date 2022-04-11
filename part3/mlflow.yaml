@@ -28,13 +28,13 @@ spec:
             - name: DB_NAME
               value: "mlflow-artifacts"
             - name: ARTIFACT_STORE
-              value: "s3//:mlflow-artifacts"
+              value: "s3://artifacts/"
             - name: AWS_ACCESS_KEY_ID
               value: "admin"
             - name: AWS_SECRET_ACCESS_KEY
               value: "dYzac5sD8R"
             - name: MLFLOW_S3_ENDPOINT_URL
-              value: "172.17.0.16:9000"
+              value: "http://mlflow-minio:9000"
 ---
 apiVersion: v1
 kind: Service

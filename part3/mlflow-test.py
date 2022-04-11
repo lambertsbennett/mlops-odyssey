@@ -7,7 +7,7 @@ import mlflow.sklearn
 
 mlflow.set_tracking_uri('http://localhost:5000')
 
-mlflow.set_experiment("test-localhost-1")
+mlflow.set_experiment("test2")
 
 with mlflow.start_run(run_name="YOUR_RUN_NAME") as run:
     params = {"n_estimators": 5, "random_state": 42}
@@ -20,11 +20,11 @@ with mlflow.start_run(run_name="YOUR_RUN_NAME") as run:
 
     os.environ["AWS_ACCESS_KEY_ID"] = "admin"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "dYzac5sD8R"
-    os.environ['MLFLOW_S3_ENDPOINT_URL'] = 'http://localhost:9001'
+    os.environ['MLFLOW_S3_ENDPOINT_URL'] = 'http://localhost:9000'
 
     # Log the sklearn model and register as version 1
     mlflow.sklearn.log_model(
         sk_model=sk_learn_rfr,
-        artifact_path="sklearn-model",
+        artifact_path="artifacts",
         registered_model_name="sk-learn-random-forest-reg-model"
     )
