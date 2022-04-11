@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-tracking-server
+  labels:
+    app: mlflow-tracking-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-tracking-server-pods
+  template:
+    metadata:
+      labels:
+        app: mlflow-tracking-server-pods
+    spec:
+      containers:
+        - name: mlflow-tracking-server-pod
+          image: lambertsbennett/mlflow:latest
+          imagePullPolicy: Always
+          env:
+            - name: DB_USERNAME
+              value: "user"
+            - name: DB_PASSWORD
+              value: "password"
+            - name: DB_URL
+              value: "mlflow-postgres-postgresql.mlops.svc.cluster.local"
+            - name: DB_NAME
+              value: "mlflow-artifacts"
+            - name: ARTIFACT_STORE
+              value: "s3//:mlflow-artifacts"
+            - name: AWS_ACCESS_KEY_ID
+              value: "admin"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "dYzac5sD8R"
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: "172.17.0.16:9000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mlflow-tracking-server
+  name: mlflow-tracking-server
+spec:
+  ports:
+    - port: 5000
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: mlflow-tracking-server-pods
