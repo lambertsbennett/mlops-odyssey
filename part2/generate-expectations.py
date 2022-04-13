@@ -158,6 +158,10 @@ def generate_expectations():
         "validation", "ge-store.tar.gz", "./ge-store.tar.gz",
     )
 
+    client.fput_object(
+        "train", "raw_data.csv", "/data/raw_data.csv"
+    )
+
 
 ws = WorkflowService(host="https://localhost:2746", verify_ssl=False, token=TOKEN)
 w = Workflow("generate-expectations", ws, namespace="argo")
