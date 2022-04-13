@@ -1,0 +1,7 @@
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: mapping-minikube
+spec:
+  prefix: /model/
+  service: mlflow-serving-default-regressor.models:9000

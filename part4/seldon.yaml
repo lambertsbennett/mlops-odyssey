@@ -13,3 +13,23 @@ spec:
         name: regressor
       name: default
       replicas: 1
+      componentSpecs:
+        - spec:
+            containers:
+              - name: regressor
+                readinessProbe:
+                  failureThreshold: 500
+                  initialDelaySeconds: 10000
+                  periodSeconds: 1000
+                  successThreshold: 1
+                  tcpSocket:
+                    port: http
+                  timeoutSeconds: 100
+                livenessProbe:
+                  failureThreshold: 500
+                  initialDelaySeconds: 10000
+                  periodSeconds: 100
+                  successThreshold: 1
+                  tcpSocket:
+                    port: http
+                  timeoutSeconds: 1000
