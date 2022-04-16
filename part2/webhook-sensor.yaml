@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: webhook
+spec:
+  template:
+    serviceAccountName: argo
+  dependencies:
+    - name: train-hook
+      eventSourceName: webhook
+      eventName: retrain
+  triggers:
+    - template:
+        name: webhook-workflow-trigger
+        k8s:
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: webhook-
+                namespace: argo
+              spec:
+                entrypoint: retrain
+                templates:
+                  - name: retrain
+                    steps:
+                      - - name: template-run
+                          templateRef:
+                            name: generate-expectations
+                            template: generate-expectations

@@ -1,9 +1,8 @@
+import profile
 from hera.task import Task
 from hera.workflow import Workflow
 from hera.workflow_service import WorkflowService
 from hera.artifact import InputArtifact, OutputArtifact
-from hera.workflow_template import WorkflowTemplate
-from hera.workflow_template_service import WorkflowTemplateService
 
 TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjRvbjlyZnVxbDNUaDNVWm9QLTdZbTY2RThMYUd5Yjdzc2lDMFlUU0pjNXMifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJhcmdvIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImFyZ28tdG9rZW4teHp6Z2siLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiYXJnbyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImIwOTkyZDllLWVkNTMtNGZiMS04ZTM4LTQ2MGNjZWUyMzM0NSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDphcmdvOmFyZ28ifQ.BS1DEcSA90GiiyL8TbbT40JwS-909cIJa8N3DybfGyJVrD04tsWPoDlDFPmt2ENkHfQ4hMnw7wuDj59cHhpWIoCthwsoMNGY3oKDMgUcqrEu-7fyIlt53R3yRT_7aekqQF-eQbKGVrlUVL-GsDf7pmFte-osBPJdB-A44O8_b70qDNqy1daTlY_HRiTXFKBJV3bZyl1M0RnRFuwY4JADCu9nxzcAFOKl1oP2ffJCEjlSGY0bknpH8Wr462v6lPbHeM5OY1bIqN3mD98V0NsmyDzkUNa_efE0lwFVXFmO08O6vH7erT_Pcxj-og3AwluIWaM-cFeUfLdM76n6CBAY9g"
 
@@ -159,26 +158,19 @@ def generate_expectations():
         "validation", "ge-store.tar.gz", "./ge-store.tar.gz",
     )
 
-
-def store_train_data():
+def preprocess():
     from minio import Minio
-    from datetime import datetime
-    
-    client = Minio(
-        "minio.mlops:9000",
-        access_key="admin",
-        secret_key="uFjMGBwTmS",
-        secure=False
-    )
+    import pandas as pd
+
+    df = pd.read_csv("/data/raw_data.csv")
+    df = df.dropna()
+    daily_median = df.groupby(by=["date.utc", "parameter"]).median()
 
 
-    client.fput_object(
-        "train", f"train_data_{datetime.now()}.csv", "/data/raw_data.csv"
-    )
 
 
-ws = WorkflowTemplateService(host="https://localhost:2746", verify_ssl=False, token=TOKEN)
-w = WorkflowTemplate("generate-expectations", ws, namespace="argo")
+ws = WorkflowService(host="https://localhost:2746", verify_ssl=False, token=TOKEN)
+w = Workflow("generate-expectations", ws, namespace="argo")
 
 extract_task = Task("extract-openaq", extract, image="lambertsbennett/extract:v2", 
                     output_artifacts = [OutputArtifact(name="RawData", path="/data/raw_data.csv")])
@@ -186,12 +178,7 @@ extract_task = Task("extract-openaq", extract, image="lambertsbennett/extract:v2
 ge_task = Task("great-expectations-gen", generate_expectations, image="lambertsbennett/argo-ge:v1", 
                     input_artifacts = [InputArtifact(name="RawData", path="/data/raw_data.csv", from_task="extract-openaq", artifact_name="RawData")])
 
-store_task = Task("store-train-data", store_train_data, image="lambertsbennett/argo-ge:v1", 
-                    input_artifacts = [InputArtifact(name="RawData", path="/data/raw_data.csv", from_task="extract-openaq", artifact_name="RawData")])
-
-
 extract_task >> ge_task
-extract_task >> store_task
 
-w.add_tasks(extract_task, ge_task, store_task)
-w.create(namespace="argo")
+w.add_tasks(extract_task, ge_task)
+w.submit()
